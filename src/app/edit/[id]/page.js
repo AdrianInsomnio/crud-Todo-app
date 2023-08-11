@@ -1,31 +1,22 @@
-import Image from "next/image";
-import Todo from "../../models/todo";
-import dbConnect from "../../utils/dbconnect";
-import { redirect } from "next/navigation";
+import dbConnect from "../../../../utils/dbconnect"
+import Todo from "../../../../models/todo"
+import { redirect } from "next/navigation"
 
-const mongoose = require("mongoose");
-export default async function Home() {
-  async function newTodo(data) {
-    "use server";
-    let title = data.get("title")?.valueOf();
+export default async function Edit({params}){
+  dbConnect();
+  const todos= await Todo.findOne ({_id: params.id })
+  async function updateTodo(data){
+    "use server"
+    let title= data.get("title")?.valueOf();
     let todo = data.get("todo")?.valueOf();
-    try {
-      dbConnect();
-      let newTodo = new Todo({ title, todo });
-      await newTodo.save();
-      console.log(newTodo);
-
-    } catch (error) {
-      console.error(error);
-    } finally{
-        redirect('/show')       
-    }
-   
+    let updateTodo = await Todo.findByIdAndUpdate({_id:params.id},{title, todo})
+    console.log(updateTodo);
+    redirect("/show")
   }
-  return (
-    <main className="m-10 apsce-y-5">
+    return(
+        <main className="m-10 apsce-y-5">
       <h1 className="text-xl font-bold">Create Todo</h1>
-      <form action={newTodo}>
+      <form action= {updateTodo} >
         <div className="">
           <label htmlFor="title" className="text-lg">
             Title
@@ -35,6 +26,7 @@ export default async function Home() {
             type="text"
             name="title"
             id="title"
+            defaultValue={todos.title}
             className="w-[100%] bg-slate-200 h-10 p-3 text-slate-900"
           />
         </div>
@@ -47,6 +39,7 @@ export default async function Home() {
             type="text"
             name="todo"
             id="todo"
+            defaultValue={todos.todo}
             className="w-[100%] bg-slate-200 h-10 p-3 text-slate-900"
           />
         </div>
@@ -58,5 +51,5 @@ export default async function Home() {
         </button>
       </form>
     </main>
-  );
+        )
 }
