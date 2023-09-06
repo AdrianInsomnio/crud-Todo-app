@@ -1,0 +1,2 @@
+DB_MONGOURL_LOCAL="mongodb://127.0.0.1:27017/next13"
+DB_NAME="next13"
